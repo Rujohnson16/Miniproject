@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blackjack Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #006400;
+      color: white;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    #game {
+      padding: 20px;
+    }
+    .hand {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .card {
+      width: 60px;
+      height: 90px;
+      background-color: white;
+      color: black;
+      border: 1px solid #000;
+      border-radius: 8px;
+      margin: 5px;
+      font-size: 1.2em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .red {
+      color: red;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+    <a href="scratch.html">To Scratch Page</a>
+  <h1>Blackjack</h1>
+  <div id="game">
+    <div>
+      <h2>Dealer's Hand</h2>
+      <div id="dealer-hand" class="hand"></div>
+    </div>
+    <div>
+      <h2>Your Hand</h2>
+      <div id="player-hand" class="hand"></div>
+    </div>
+    <div id="message"></div>
+    <button onclick="hit()">Hit</button>
+    <button onclick="stay()">Stay</button>
+    <button onclick="startGame()">Restart</button>
+  </div>
+  <script>
+    let deck, playerHand, dealerHand;
+
+    function createDeck() {
+      const suits = ['♠', '♥', '♦', '♣'];
+      const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+      let deck = [];
+      for (let suit of suits) {
+        for (let value of values) {
+          deck.push({ suit, value });
+        }
+      }
+      return deck.sort(() => Math.random() - 0.5);
+    }
+
+    function getValue(card) {
+      if (['J', 'Q', 'K'].includes(card.value)) return 10;
+      if (card.value === 'A') return 11;
+      return parseInt(card.value);
+    }
+
+    function getHandValue(hand) {
+      let value = hand.reduce((sum, card) => sum + getValue(card), 0);
+      let aces = hand.filter(card => card.value === 'A').length;
+      while (value > 21 && aces > 0) {
+        value -= 10;
+        aces--;
+      }
+      return value;
+    }
+
+    function renderHand(hand, elementId) {
+      const container = document.getElementById(elementId);
+      container.innerHTML = '';
+      for (let card of hand) {
+        const div = document.createElement('div');
+        div.className = 'card ' + ((card.suit === '♥' || card.suit === '♦') ? 'red' : '');
+        div.innerHTML = `<div>${card.value}</div><div>${card.suit}</div>`;
+        container.appendChild(div);
+      }
+    }
+
+    function startGame() {
+      deck = createDeck();
+      playerHand = [deck.pop(), deck.pop()];
+      dealerHand = [deck.pop(), deck.pop()];
+      renderHand(playerHand, 'player-hand');
+      renderHand(dealerHand, 'dealer-hand');
+      document.getElementById('message').textContent = '';
+    }
+
+    function hit() {
+      playerHand.push(deck.pop());
+      renderHand(playerHand, 'player-hand');
+      const value = getHandValue(playerHand);
+      if (value > 21) {
+        document.getElementById('message').textContent = 'You bust! Dealer wins.';
+      }
+    }
+
+    function stay() {
+      while (getHandValue(dealerHand) < 17) {
+        dealerHand.push(deck.pop());
+      }
+      renderHand(dealerHand, 'dealer-hand');
+
+      const playerValue = getHandValue(playerHand);
+      const dealerValue = getHandValue(dealerHand);
+
+      let message;
+      if (dealerValue > 21 || playerValue > dealerValue) {
+        message = 'You win!';
+      } else if (playerValue < dealerValue) {
+        message = 'Dealer wins.';
+      } else {
+        message = "It's a tie!";
+      }
+      document.getElementById('message').textContent = message;
+    }
+
+    startGame();
+  </script>
+</body>
+</html>

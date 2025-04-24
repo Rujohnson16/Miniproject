@@ -1,0 +1,33 @@
+body {
+  font-family: "Courier New", Courier, monospace;
+  margin: 20px;
+  background: #1f1342;
+  color: #ffffff;
+}
+div {
+  position: relative;
+  top: 20px;
+  left: 30px;
+}
+h1 {
+  font-size: 24px;
+  font-weight: bolder;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+p {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+a {
+  color: lightblue;
+}
